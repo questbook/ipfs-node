@@ -1,0 +1,15 @@
+version: '3'
+services:
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - '8080:8080'
+      - '5001:5001'
+    volumes:
+      - ipfs_staging:/export
+      - ipfs_data:/data/ipfs
+volumes:
+  ipfs_staging:
+    driver: local
+  ipfs_data:
+    driver: local

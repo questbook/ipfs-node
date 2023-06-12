@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Get timestamp
+      uses: gerred/actions/current-time@master
+      id: current-time
+
+    - name: Run string replace
+      uses: frabert/replace-string-action@master
+      id: format-time
+      with:
+        pattern: '[:\.]+'
+        string: "${{ steps.current-time.outputs.time }}"
+        replace-with: '-'
+        flags: 'g'
+      
+    - name: Deploy to ELB
+      uses: einaregilsson/beanstalk-deploy@v18
+      with:
+         aws_access_key: "${{secrets.AWS_ACCESS_KEY}}"
+         aws_secret_key: "${{secrets.AWS_SECRET_KEY}}"
+         application_name: "the-graph"
+         environment_name: "ipfs-node"
+         region: "ap-south-1"
+         version_label: "${{ github.event.repository.name }}-${{ steps.format-time.outputs.replaced }}"
+         region_specific_s3: "true"
+         use_existing_version_if_available: "true"
+         deployment_package: "docker-compose.yaml"
