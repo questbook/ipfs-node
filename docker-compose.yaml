@@ -1,13 +1,25 @@
 version: '3'
 services:
-  ipfs:
-    image: ipfs/kubo:latest
+  ipfs_node:
+    build:
+      context: ./
+      dockerfile: ./docker/ipfs_node.dockerfile
     ports:
       - '8080:8080'
       - '5001:5001'
     volumes:
       - ipfs_staging:/export
       - ipfs_data:/data/ipfs
+    restart: on-failure
+  envoy:
+    build:
+      context: ./
+      dockerfile: ./docker/envoy.dockerfile
+    depends_on:
+      - ipfs_node
+    ports:
+      - 5002:5002
+    restart: on-failure
 volumes:
   ipfs_staging:
     driver: local
