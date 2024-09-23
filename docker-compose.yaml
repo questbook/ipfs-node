@@ -10,6 +10,8 @@ services:
     volumes:
       - ipfs_staging:/export
       - ipfs_data:/data/ipfs
+    environment:
+      - IPFS_PATH=/data/ipfs
     restart: on-failure
   envoy:
     build:

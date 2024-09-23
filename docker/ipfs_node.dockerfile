@@ -1,4 +1,6 @@
-FROM ipfs/kubo:master-2023-06-15-9298e31
+FROM ipfs/kubo:latest
+
+RUN ipfs init
 
 ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["ipfs daemon --agent-version-suffix=docker"]
+CMD ["ipfs daemon --agent-version-suffix=docker --migrate=true"]
